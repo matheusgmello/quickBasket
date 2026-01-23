@@ -96,4 +96,23 @@ public class BasketService {
         return basketRepository.save(savedBasket);
     }
 
+    public Basket clearBasket(String basketId) {
+        Basket savedBasket = getBasketById(basketId);
+
+        if (savedBasket.getStatus() != Status.OPEN) {
+            throw new IllegalStateException("Apenas cestas com status OPEN podem ser limpas");
+        }
+
+        savedBasket.setProducts(new ArrayList<>());
+        savedBasket.setPaymentMethod(null);
+        savedBasket.getProducts().clear();
+        savedBasket.calculateTotalPrice();
+
+        return basketRepository.save(savedBasket);
+    }
+
+    public void deleteBasket(String id) {
+        basketRepository.delete(getBasketById(id));
+    }
+
 }
