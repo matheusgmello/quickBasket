@@ -24,6 +24,10 @@ public class BasketService {
     private final BasketRepository basketRepository;
     private final ProductService productService;
 
+    public List<Basket> getAllBasket() {
+        return basketRepository.findAll();
+    }
+
     public Basket getBasketById(String id) {
         return basketRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Cesta não encontrada"));

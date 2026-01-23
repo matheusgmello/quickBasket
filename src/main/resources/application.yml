@@ -18,3 +18,9 @@ spring:
 basket:
   client:
     platzi: https://api.escuelajs.co/api/v1
+
+springdoc:
+  api-docs:
+    path: /api/api-docs
+  swagger-ui:
+    path: /swagger/index.html
