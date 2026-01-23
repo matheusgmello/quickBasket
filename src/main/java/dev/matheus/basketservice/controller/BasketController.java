@@ -1,6 +1,7 @@
 package dev.matheus.basketservice.controller;
 
 import dev.matheus.basketservice.controller.request.BasketRequest;
+import dev.matheus.basketservice.controller.request.PaymentRequest;
 import dev.matheus.basketservice.entity.Basket;
 import dev.matheus.basketservice.service.BasketService;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,13 @@ public class BasketController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Basket> createBasket(@PathVariable String id, @RequestBody BasketRequest request) {
+    public ResponseEntity<Basket> updateBasket(@PathVariable String id, @RequestBody BasketRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(basketService.updateBasket(id, request));
+    }
+
+    @PutMapping("/{id}/payment")
+    public ResponseEntity<Basket> payBasket(@PathVariable String id, @RequestBody PaymentRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(basketService.payBasket(id, request));
     }
 
 }

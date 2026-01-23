@@ -2,6 +2,7 @@ package dev.matheus.basketservice.service;
 
 import dev.matheus.basketservice.client.response.PlatziProductResponse;
 import dev.matheus.basketservice.controller.request.BasketRequest;
+import dev.matheus.basketservice.controller.request.PaymentRequest;
 import dev.matheus.basketservice.entity.Basket;
 import dev.matheus.basketservice.entity.Product;
 import dev.matheus.basketservice.entity.Status;
@@ -29,7 +30,7 @@ public class BasketService {
 
         basketRepository.findByClientAndStatus(basketRequest.clientId(), Status.OPEN)
                 .ifPresent(existingBasket -> {
-                    throw new IllegalStateException("Client already has an open basket with id: " + existingBasket.getId());
+                    throw new IllegalStateException("Cliente já possui uma Cesta com Status OPEN, apenas uma cesta por vez: " + existingBasket.getId());
                 });
         List<Product> products = new ArrayList<>();
 
@@ -78,6 +79,19 @@ public class BasketService {
 
         savedBasket.setProducts(products);
         savedBasket.calculateTotalPrice();
+
+        return basketRepository.save(savedBasket);
+    }
+
+    public Basket payBasket(String basketId, PaymentRequest request) {
+        Basket savedBasket = getBasketById(basketId);
+
+        if (savedBasket.getStatus() != Status.OPEN) {
+            throw new IllegalStateException("Apenas cestas com status OPEN podem ser pagas");
+        }
+
+        savedBasket.setPaymentMethod(request.getPaymentMethod());
+        savedBasket.setStatus(Status.SOLD);
 
         return basketRepository.save(savedBasket);
     }
