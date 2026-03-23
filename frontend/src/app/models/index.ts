@@ -13,7 +13,7 @@ export interface Product {
 
 export interface BasketProduct {
   id: number;
-  name: string;
+  title: string;
   price: number;
   quantity: number;
 }
