@@ -15,7 +15,7 @@ import { AuthService } from '../services/auth.service';
         <div class="basket-items">
           @for (item of b.products; track item.id) {
             <div class="basket-item">
-              <span>{{ item.name }}</span>
+              <span>{{ item.title }}</span>
               <span>x{{ item.quantity }}</span>
               <span>{{ item.price | currency }}</span>
               <span>Subtotal: {{ (item.price * item.quantity) | currency }}</span>
@@ -43,30 +43,40 @@ import { AuthService } from '../services/auth.service';
     .basket-item {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr 1fr;
-      padding: 10px;
+      padding: 15px;
       border-bottom: 1px solid #eee;
+      align-items: center;
     }
     .basket-summary {
       margin-top: 20px;
       text-align: right;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .basket-summary p {
       font-size: 1.5rem;
       font-weight: bold;
+      margin-bottom: 20px;
+      color: #2d3436;
     }
     .actions {
       display: flex;
-      gap: 10px;
+      gap: 15px;
       justify-content: flex-end;
-      margin-top: 10px;
     }
     button {
-      padding: 10px 20px;
-      border-radius: 4px;
+      padding: 12px 25px;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
       font-weight: bold;
+      transition: opacity 0.2s;
     }
-    .clear-btn { background: #e74c3c; color: #fff; }
-    .pay-btn { background: #27ae60; color: #fff; }
+    button:hover { opacity: 0.8; }
+    .clear-btn { background: #ff7675; color: #fff; }
+    .pay-btn { background: #00b894; color: #fff; }
   `]
 })
 export class BasketDetailsComponent implements OnInit {
@@ -88,14 +98,23 @@ export class BasketDetailsComponent implements OnInit {
   }
 
   clearBasket(id: string) {
-    this.basketService.clearBasket(id).subscribe(() => this.loadBasket());
+    if (confirm('Deseja realmente limpar o carrinho?')) {
+      this.basketService.clearBasket(id).subscribe(() => this.loadBasket());
+    }
   }
 
   payBasket(id: string) {
-    const request: PaymentRequest = { paymentMethod: 'CREDIT_CARD' };
-    this.basketService.payBasket(id, request).subscribe(() => {
-      alert('Pagamento processado com sucesso!');
-      this.loadBasket();
+    // Corrected PaymentMethod to match Backend Enum: PIX, DEBIT, CREDIT
+    const request: PaymentRequest = { paymentMethod: 'CREDIT' };
+    this.basketService.payBasket(id, request).subscribe({
+      next: () => {
+        alert('✅ Pagamento processado com sucesso!');
+        this.loadBasket();
+      },
+      error: (err) => {
+        console.error('Erro no pagamento', err);
+        alert('❌ Erro ao processar pagamento.');
+      }
     });
   }
 }
