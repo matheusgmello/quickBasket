@@ -12,7 +12,10 @@ import java.util.List;
 public interface PlatziStoreClient {
 
     @GetMapping("/products")
-    List<PlatziProductResponse> getAllProducts();
+    List<PlatziProductResponse> getAllProducts(
+            @org.springframework.web.bind.annotation.RequestParam("offset") int offset,
+            @org.springframework.web.bind.annotation.RequestParam("limit") int limit
+    );
 
     @GetMapping("/products/{id}")
     PlatziProductResponse getProductById(@PathVariable Long id);

@@ -16,10 +16,10 @@ public class ProductService {
 
     private final PlatziStoreClient platziStoreClient;
 
-    @Cacheable(value = "products")
-    public List<PlatziProductResponse> getAllProducts() {
-        log.info("Setting all products");
-        return platziStoreClient.getAllProducts();
+    @Cacheable(value = "products", key = "#offset + '-' + #limit")
+    public List<PlatziProductResponse> getAllProducts(int offset, int limit) {
+        log.info("Setting all products with offset {} and limit {}", offset, limit);
+        return platziStoreClient.getAllProducts(offset, limit);
     }
 
     @Cacheable(value = "product", key = "#productId")

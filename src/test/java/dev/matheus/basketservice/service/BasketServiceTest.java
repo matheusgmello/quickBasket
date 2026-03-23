@@ -56,7 +56,7 @@ class BasketServiceTest {
         ProductRequest productRequest = new ProductRequest(1L, 2);
         BasketRequest basketRequest = new BasketRequest(11L, List.of(productRequest));
 
-        PlatziProductResponse platziResponse = new PlatziProductResponse(1L, "Produto Teste", new BigDecimal("50.00"));
+        PlatziProductResponse platziResponse = new PlatziProductResponse(1L, "Produto Teste", new BigDecimal("50.00"), "desc", java.util.List.of("img"));
 
         when(basketRepository.findByClientAndStatus(anyLong(), any())).thenReturn(Optional.empty());
         when(productService.getProductById(1L)).thenReturn(platziResponse);
@@ -116,7 +116,7 @@ class BasketServiceTest {
         BasketRequest basketRequest = new BasketRequest(123L, List.of(productRequest));
 
         Basket basketExistente = Basket.builder().id(id).status(Status.OPEN).build();
-        PlatziProductResponse platziProductResponse = new PlatziProductResponse(1L, "Item", new BigDecimal("10.0"));
+        PlatziProductResponse platziProductResponse = new PlatziProductResponse(1L, "Item", new BigDecimal("10.0"), "desc", java.util.List.of("img"));
 
         when(basketRepository.findById(id)).thenReturn(Optional.of(basketExistente));
         when(productService.getProductById(1L)).thenReturn(platziProductResponse);

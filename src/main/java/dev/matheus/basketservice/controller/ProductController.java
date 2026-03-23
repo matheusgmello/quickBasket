@@ -19,8 +19,11 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<PlatziProductResponse>> getAllProducts(){
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<List<PlatziProductResponse>> getAllProducts(
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int offset,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "10") int limit
+    ){
+        return ResponseEntity.ok(productService.getAllProducts(offset, limit));
     }
 
     @GetMapping("/{id}")

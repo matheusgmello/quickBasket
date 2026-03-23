@@ -24,7 +24,7 @@ class ProductServiceTest {
 
     @Test
     void getProductByIdShouldReturnProduct() {
-        PlatziProductResponse mockResponse = new PlatziProductResponse(1L, "Console", new BigDecimal("2000"));
+        PlatziProductResponse mockResponse = new PlatziProductResponse(1L, "Console", new BigDecimal("2000"), "desc", java.util.List.of("img"));
         when(platziStoreClient.getProductById(1L)).thenReturn(mockResponse);
 
         PlatziProductResponse result = productService.getProductById(1L);

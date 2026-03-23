@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,7 +35,7 @@ class SecurityControllerIT {
     @Test
     @DisplayName("Deve retornar 200 ao acessar endpoint público sem autenticação")
     void shouldReturn200WhenAccessingPublicEndpointWithoutAuth() throws Exception {
-        when(platziStoreClient.getAllProducts()).thenReturn(Collections.emptyList());
+        when(platziStoreClient.getAllProducts(anyInt(), anyInt())).thenReturn(Collections.emptyList());
         mockMvc.perform(get("/products"))
                 .andExpect(status().isOk());
     }

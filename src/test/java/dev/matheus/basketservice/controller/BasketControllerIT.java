@@ -42,7 +42,13 @@ class BasketControllerIT {
     @DisplayName("Deve criar uma nova cesta com sucesso e retornar 201")
     void shouldCreateBasketWithSuccess() throws Exception {
 
-        PlatziProductResponse productResponse = new PlatziProductResponse(1L, "Teclado Mecânico", new BigDecimal("350.00"));
+        PlatziProductResponse productResponse = new PlatziProductResponse(
+                1L, 
+                "Teclado Mecânico", 
+                new BigDecimal("350.00"),
+                "Descrição do teclado",
+                java.util.List.of("http://image.com")
+        );
         when(platziStoreClient.getProductById(anyLong())).thenReturn(productResponse);
         
         when(basketRepository.findByClientAndStatus(anyLong(), any(Status.class))).thenReturn(Optional.empty());

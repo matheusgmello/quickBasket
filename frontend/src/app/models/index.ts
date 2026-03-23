@@ -2,13 +2,13 @@ export interface Product {
   id: number;
   title: string;
   price: number;
-  description?: string;
+  description: string;
+  images: string[];
   category?: {
     id: number;
     name: string;
     image: string;
   };
-  images?: string[];
 }
 
 export interface BasketProduct {
@@ -20,7 +20,7 @@ export interface BasketProduct {
 
 export interface Basket {
   id: string;
-  client: string;
+  client: number;
   status: string;
   totalPrice: number;
   paymentMethod?: string;
@@ -28,7 +28,7 @@ export interface Basket {
 }
 
 export interface BasketRequest {
-  clientId: string;
+  clientId: number;
   products: { id: number; quantity: number }[];
 }
 

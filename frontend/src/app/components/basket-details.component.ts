@@ -82,7 +82,7 @@ export class BasketDetailsComponent implements OnInit {
   loadBasket() {
     this.basketService.getBaskets().subscribe(baskets => {
       // For simplicity, take the first open basket for the current user
-      const currentBasket = baskets.find(b => b.client === this.authService.user && b.status === 'OPEN');
+      const currentBasket = baskets.find(b => b.client === this.authService.userId && b.status === 'OPEN');
       this.basket.set(currentBasket || null);
     });
   }

@@ -10,8 +10,8 @@ export class ProductService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = 'http://localhost:8080/products';
 
-  getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.apiUrl);
+  getProducts(offset: number = 0, limit: number = 10): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}?offset=${offset}&limit=${limit}`);
   }
 
   getProductById(id: number): Observable<Product> {
