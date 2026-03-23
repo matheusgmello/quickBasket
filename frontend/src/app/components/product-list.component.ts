@@ -4,6 +4,7 @@ import { ProductService } from '../services/product.service';
 import { BasketService } from '../services/basket.service';
 import { Product, BasketRequest } from '../models';
 import { AuthService } from '../services/auth.service';
+import { forkJoin, of, switchMap, catchError, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
@@ -127,7 +128,7 @@ export class ProductListComponent implements OnInit {
   products = signal<Product[]>([]);
   isAdding = signal(false);
   offset = signal(0);
-  limit = signal(20); // 20 items per page
+  limit = signal(10); // Changed to 10
   currentPage = computed(() => Math.floor(this.offset() / this.limit()) + 1);
 
   ngOnInit() {
@@ -136,7 +137,8 @@ export class ProductListComponent implements OnInit {
 
   loadProducts() {
     this.productService.getProducts(this.offset(), this.limit()).subscribe(products => {
-      this.products.set(products);
+      // Platzi API sometimes returns all products if limit isn't respected by them
+      this.products.set(products.slice(0, this.limit()));
       window.scrollTo(0, 0);
     });
   }
@@ -151,22 +153,45 @@ export class ProductListComponent implements OnInit {
     this.loadProducts();
   }
 
-  addToBasket(product: Product) {
+  async addToBasket(product: Product) {
     this.isAdding.set(true);
-    const request: BasketRequest = {
-      clientId: this.authService.userId,
-      products: [{ id: product.id, quantity: 1 }]
-    };
-    this.basketService.createBasket(request).subscribe({
-      next: () => {
-        this.isAdding.set(false);
-        alert('✅ Produto adicionado ao carrinho com sucesso!');
-      },
-      error: (err) => {
-        this.isAdding.set(false);
-        console.error('Erro ao adicionar produto', err);
-        alert('❌ Erro ao adicionar produto ao carrinho.');
+    
+    try {
+      const baskets = await firstValueFrom(this.basketService.getBaskets());
+      const openBasket = baskets.find(b => b.client === this.authService.userId && b.status === 'OPEN');
+      
+      if (openBasket) {
+        // Prepare updated product list
+        const existingProducts = openBasket.products.map(p => ({ id: p.id, quantity: p.quantity }));
+        const existingItem = existingProducts.find(p => p.id === product.id);
+        
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          existingProducts.push({ id: product.id, quantity: 1 });
+        }
+        
+        const request: BasketRequest = {
+          clientId: this.authService.userId,
+          products: existingProducts
+        };
+        
+        await firstValueFrom(this.basketService.updateBasket(openBasket.id, request));
+      } else {
+        // Create new basket
+        const request: BasketRequest = {
+          clientId: this.authService.userId,
+          products: [{ id: product.id, quantity: 1 }]
+        };
+        await firstValueFrom(this.basketService.createBasket(request));
       }
-    });
+      
+      alert('✅ Produto adicionado ao carrinho com sucesso!');
+    } catch (err) {
+      console.error('Erro ao gerenciar carrinho', err);
+      alert('❌ Erro ao adicionar produto ao carrinho. Verifique se o backend está rodando.');
+    } finally {
+      this.isAdding.set(false);
+    }
   }
 }
