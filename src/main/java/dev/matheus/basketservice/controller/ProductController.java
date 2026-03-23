@@ -21,7 +21,7 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<PlatziProductResponse>> getAllProducts(
             @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int offset,
-            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "10") int limit
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "20") int limit
     ){
         return ResponseEntity.ok(productService.getAllProducts(offset, limit));
     }
