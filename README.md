@@ -1,3 +1,5 @@
+![Preview Project Image](img/preview.png)
+
 # QuickBasket
 
 API para gerenciamento de um carrinho de compras com uso de API externa e cache (Redis), persistência em MongoDB e uma interface web moderna em Angular.
